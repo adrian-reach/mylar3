@@ -85,7 +85,7 @@ class Process(object):
                     else:
                         mode = 'want_ann'
                     qq = mylar.webserve.WebInterface()
-                    qt = qq.queueit(mode=mode, ComicName=failchk[0]['comicname'], ComicIssue=failchk[0]['issuenumber'], ComicID=failchk[0]['comicid'], IssueID=failchk[0]['issueid'], manualsearch=True)
+                    qt = qq.queueit(mode=mode, ComicName=failchk[0]['comicname'], ComicIssue=failchk[0]['issuenumber'], ComicID=failchk[0]['comicid'], IssueID=failchk[0]['issueid'])
                 elif failchk[0]['mode'] == 'stop':
                     pass
                 else:

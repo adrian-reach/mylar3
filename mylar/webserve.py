@@ -2061,7 +2061,7 @@ class WebInterface(object):
                     logger.info('Attempting to return to search module with ' + str(failchk[0]['issueid']))
                     if failchk[0]['annchk'] == 'no': mode = 'want'
                     else: mode = 'want_ann'
-                    self.queueit(mode=mode, ComicName=failchk[0]['comicname'], ComicIssue=failchk[0]['issuenumber'], ComicID=failchk[0]['comicid'], IssueID=failchk[0]['issueid'], manualsearch=True)
+                    self.queueit(mode=mode, ComicName=failchk[0]['comicname'], ComicIssue=failchk[0]['issuenumber'], ComicID=failchk[0]['comicid'], IssueID=failchk[0]['issueid'])
                 elif failchk[0]['mode'] == 'stop':
                     yield failchk[0]['self.log']
                 else:
@@ -2947,7 +2947,7 @@ class WebInterface(object):
             logger.info('Attempting to return to search module with ' + str(failchk[0]['issueid']))
             if failchk[0]['annchk'] == 'no': mode = 'want'
             else: mode = 'want_ann'
-            self.queueit(mode=mode, ComicName=failchk[0]['comicname'], ComicIssue=failchk[0]['issuenumber'], ComicID=failchk[0]['comicid'], IssueID=failchk[0]['issueid'], manualsearch=True)
+            self.queueit(mode=mode, ComicName=failchk[0]['comicname'], ComicIssue=failchk[0]['issuenumber'], ComicID=failchk[0]['comicid'], IssueID=failchk[0]['issueid'])
         elif failchk[0]['mode'] == 'stop':
             pass
         else:
