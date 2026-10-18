@@ -4,7 +4,15 @@ import time
 from pathlib import Path
 
 import mylar
-from .. import logger, helpers
+from .. import logger, helpers, db
+
+
+def series_is_paused(comicid):
+    if comicid is None:
+        return False
+    myDB = db.DBConnection()
+    comic = myDB.selectone('SELECT Status FROM comics WHERE ComicID=?', [comicid]).fetchone()
+    return comic is not None and comic['Status'] == 'Paused'
 
 
 def search_queue(queue):
@@ -23,6 +31,11 @@ def search_queue(queue):
                 if mylar.PACK_ISSUEIDS_DONT_QUEUE[item['issueid']] in mylar.DDL_QUEUED:
                     logger.fdebug('[SEARCH-QUEUE-PACK-DETECTION] %s already queued to download via pack...Ignoring' % item['issueid'])
                     gumbo_line = False
+
+            #the series could have been paused after this was queued - only searches explicitly requested via manual search get through
+            if gumbo_line and not item.get('manual', False) and series_is_paused(item['comicid']):
+                logger.info('[SEARCH-QUEUE] %s #%s is part of a Paused series - removing from search queue' % (item.get('comicname'), item.get('issuenumber')))
+                gumbo_line = False
 
             if gumbo_line:
                 logger.fdebug('[SEARCH-QUEUE] Now loading item from search queue: %s' % item)
