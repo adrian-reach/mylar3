@@ -3704,10 +3704,22 @@ class WebInterface(object):
 
     def searchformissing(self, ComicID):
         #search for 'missing' issues for a given series without marking them as Wanted (issues that are in a Skipped or Wanted state).
+        self.search_series_by_status(ComicID, ['Skipped', 'Wanted', 'Snatched'], 'SEARCH-FOR-MISSING')
+
+    searchformissing.exposed = True
+
+    def searchforwanted(self, ComicID):
+        #search for only the issues of a given series that are marked as Wanted.
+        self.search_series_by_status(ComicID, ['Wanted'], 'SEARCH-FOR-WANTED')
+
+    searchforwanted.exposed = True
+
+    def search_series_by_status(self, ComicID, statuses, module):
         myDB = db.DBConnection()
-        missing = myDB.select("SELECT a.ComicName, a.ComicYear, b.* FROM comics a join issues b on a.comicid=b.comicid WHERE a.ComicID=? AND (b.Status ='Skipped' or b.Status='Wanted' or b.Status = 'Snatched')", [ComicID])
+        status_seq = ','.join('?' * len(statuses))
+        missing = myDB.select("SELECT a.ComicName, a.ComicYear, b.* FROM comics a join issues b on a.comicid=b.comicid WHERE a.ComicID=? AND b.Status IN ({seq})".format(seq=status_seq), [ComicID] + statuses)
         if mylar.CONFIG.ANNUALS_ON:
-            missing += myDB.select("SELECT a.ComicName, a.ComicYear, b.* FROM comics a join annuals b on a.comicid=b.comicid WHERE a.ComicID=? AND (b.Status ='Skipped' or b.Status='Wanted' or b.Status ='Snatched')", [ComicID])
+            missing += myDB.select("SELECT a.ComicName, a.ComicYear, b.* FROM comics a join annuals b on a.comicid=b.comicid WHERE a.ComicID=? AND b.Status IN ({seq})".format(seq=status_seq), [ComicID] + statuses)
         missinglist = []
         comicname = None
         comicyear = None
@@ -3718,13 +3730,11 @@ class WebInterface(object):
             missinglist.append(mis['IssueID'])
         if missinglist:
             threading.Thread(target=search.searchIssueIDList, args=[missinglist]).start()
-            logger.info('[SEARCH-FOR-MISSING] Queued up %s issues to search for' % (len(missinglist)))
+            logger.info('[%s] Queued up %s issues to search for' % (module, len(missinglist)))
             mylar.GLOBAL_MESSAGES = {'status': 'success', 'comicname': comicname, 'seriesyear': comicyear, 'comicid': ComicID, 'tables': 'None', 'message': 'Successfully queued up %s issues of %s (%s)to search for' % (len(missinglist), comicname, comicyear)}
         else:
-            logger.info('[SEARCH-FOR-MISSING] Nothing to queue up')
+            logger.info('[%s] Nothing to queue up' % module)
             mylar.GLOBAL_MESSAGES = {'status': 'success', 'comicname': None, 'seriesyear': None, 'comicid': ComicID, 'tables': 'None', 'message': 'Nothing to queue up'}
-
-    searchformissing.exposed = True
 
     def skipped2wanted(self, comicid, fromupdate=None):
         # change all issues for a given ComicID that are Skipped, into Wanted.
