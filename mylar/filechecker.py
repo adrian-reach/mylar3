@@ -300,6 +300,9 @@ class FileChecker(object):
 
         #nzb names often wrap the year in square brackets (ie. Series.001.[2014].[digital]) - treat it like (2014) so the year gets detected
         modfilename = re.sub(r'\[((?:19|20)\d{2})\]', r'(\1)', modfilename)
+        #some groups glue the publisher to the year (ie. (DC.2024) / [DC.2024]) - split them apart so the year isn't parsed as a decimal issue #
+        pub_year_spacer = ' ' if ' ' in modfilename else '.'
+        modfilename = re.sub(r'[\(\[]([A-Za-z][\w&-]*)\.((?:19|20)\d{2})[\)\]]', r'(\1)%s(\2)' % pub_year_spacer, modfilename)
 
         #make sure all the brackets are properly spaced apart
         if modfilename.find(r'\s') == -1:
