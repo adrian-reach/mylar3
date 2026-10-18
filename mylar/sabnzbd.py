@@ -262,24 +262,32 @@ class SABnzbd(object):
                     #get the stage / error message and see what we can do
                     stage = hq['stage_log']
                     logger.fdebug('stage: %s' % (stage,))
+                    bad_file = True
                     for x in stage:
                         if 'Failed' in x['actions'] and any([x['name'] == 'Unpack', x['name'] == 'Repair']):
                             if 'moving' in x['actions']:
+                                # failed moving the completed files - not a problem with the nzb itself
                                 logger.warn('There was a failure in SABnzbd during the unpack/repair phase that caused a failure: %s' % x['actions'])
+                                bad_file = False
                             else:
                                 logger.warn('Failure occured during the Unpack/Repair phase of SABnzbd. This is probably a bad file: %s' % x['actions'])
-                                if mylar.FAILED_DOWNLOAD_HANDLING is True:
-                                    found = {'status':   True,
-                                             'name':     re.sub('.nzb', '', hq['nzb_name']).strip(),
-                                             'location': os.path.abspath(os.path.join(hq['storage'], os.pardir)),
-                                             'failed':   True,
-                                             'issueid':  nzbinfo['issueid'],
-                                             'comicid':  nzbinfo['comicid'],
-                                             'apicall':  True,
-                                             'ddl':      False,
-                                             'download_info': nzbinfo['download_info']}
-                            self.remove_history(hq['nzo_id'], hq['status'])
                             break
+                    else:
+                        # failures outside of unpack/repair (ie. missing articles / aborted downloads) mean the nzb is bad
+                        logger.warn('SABnzbd failed to download %s: %s' % (hq['nzb_name'], hq.get('fail_message')))
+
+                    if bad_file and mylar.CONFIG.FAILED_DOWNLOAD_HANDLING is True:
+                        storage = hq.get('storage') or hq.get('path') or ''
+                        found = {'status':   True,
+                                 'name':     re.sub(r'\.nzb$', '', hq['nzb_name']).strip(),
+                                 'location': os.path.abspath(os.path.join(storage, os.pardir)),
+                                 'failed':   True,
+                                 'issueid':  nzbinfo['issueid'],
+                                 'comicid':  nzbinfo['comicid'],
+                                 'apicall':  True,
+                                 'ddl':      False,
+                                 'download_info': nzbinfo['download_info']}
+                        self.remove_history(hq['nzo_id'], hq['status'])
                     if found['status'] is False:
                         self.remove_history(hq['nzo_id'], hq['status'])
                         return {'status': 'failed_in_sab', 'failed': False}
