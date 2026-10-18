@@ -4129,23 +4129,20 @@ def last_run_check(write=None, check=None, provider=None):
         writeout = myDB.upsert("provider_searches", vals, ctrls)
 
 def check_the_search_delay(manual=False):
-    # set a delay between searches here. Default is for 30 seconds...
+    # delay (in seconds) between searches against the same provider.
     # changing this to lower could result in a ban from your nzb source
     # due to hammering.
-    if (
-        mylar.CONFIG.SEARCH_DELAY == 'None'
-        or mylar.CONFIG.SEARCH_DELAY is None
-        or manual
-    ):
-        pause_the_search = 30  # in seconds
-    elif str(mylar.CONFIG.SEARCH_DELAY).isdigit() and manual is False:
-        pause_the_search = int(mylar.CONFIG.SEARCH_DELAY) * 60
-    else:
+    try:
+        pause_the_search = int(mylar.CONFIG.SEARCH_DELAY_SECONDS)
+    except (TypeError, ValueError):
         logger.warn(
             'Check Search Delay - invalid numerical given.'
             ' Force-setting to 30 seconds.'
         )
         pause_the_search = 30
+    if manual:
+        # manual searches never wait more than 30 seconds
+        pause_the_search = min(pause_the_search, 30)
     return pause_the_search
 
 def search_the_matrix(scarios):

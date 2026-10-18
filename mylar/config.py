@@ -45,6 +45,7 @@ _CONFIG_DEFINITIONS = OrderedDict({
     'WANTED_TAB_OFF': (bool, 'General', False),
     'ENABLE_RSS': (bool, 'General', False),
     'SEARCH_DELAY' : (int, 'General', 1),
+    'SEARCH_DELAY_SECONDS' : (int, 'General', 0),
     'GRABBAG_DIR': (str, 'General', None),
     'HIGHCOUNT': (int, 'General', 0),
     'MAINTAINSERIESFOLDER': (bool, 'General', False),
@@ -1394,6 +1395,14 @@ class Config(object):
         if self.SEARCH_DELAY < 1:
             logger.fdebug("Minimum search delay set for 1 minute to avoid hammering.")
             self.SEARCH_DELAY = 1
+
+        #search_delay_seconds replaces the old minute-based search_delay - carry the old value over if it's not been set yet
+        if self.SEARCH_DELAY_SECONDS == 0:
+            self.SEARCH_DELAY_SECONDS = self.SEARCH_DELAY * 60
+
+        if self.SEARCH_DELAY_SECONDS < 5:
+            logger.fdebug("Minimum search delay set for 5 seconds to avoid hammering.")
+            self.SEARCH_DELAY_SECONDS = 5
 
         if self.RSS_CHECKINTERVAL < 20:
             logger.fdebug("Minimum RSS Interval Check delay set for 20 minutes to avoid hammering.")

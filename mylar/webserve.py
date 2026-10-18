@@ -6926,7 +6926,7 @@ class WebInterface(object):
                     "download_scan_interval": mylar.CONFIG.DOWNLOAD_SCAN_INTERVAL,
                     "search_interval": mylar.CONFIG.SEARCH_INTERVAL,
                     "nzb_startup_search": helpers.checked(mylar.CONFIG.NZB_STARTUP_SEARCH),
-                    "search_delay": mylar.CONFIG.SEARCH_DELAY,
+                    "search_delay_seconds": mylar.CONFIG.SEARCH_DELAY_SECONDS,
                     "nzb_downloader_sabnzbd": helpers.radio(mylar.CONFIG.NZB_DOWNLOADER, 0),
                     "nzb_downloader_nzbget": helpers.radio(mylar.CONFIG.NZB_DOWNLOADER, 1),
                     "nzb_downloader_blackhole": helpers.radio(mylar.CONFIG.NZB_DOWNLOADER, 2),

@@ -589,3 +589,12 @@ def test_issue_exception_list_pattern(monkeypatch):
 # stupidchk
 # ThreadWithReturnValue class appears unused
 # date_conversion
+
+
+@pytest.mark.parametrize("delay,manual,result", [(60, False, 60), (10, False, 10), (60, True, 30), (10, True, 10), ('junk', False, 30)])
+@pytest.mark.unit
+def test_check_the_search_delay(monkeypatch, delay, manual, result):
+    from mylar import search
+    monkeypatch.setattr(mylar, "CONFIG", mylar.config.Config("./nothing"))
+    monkeypatch.setattr(mylar.CONFIG, "SEARCH_DELAY_SECONDS", delay, raising=False)
+    assert search.check_the_search_delay(manual) == result
