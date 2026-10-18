@@ -740,6 +740,9 @@ class FileChecker(object):
                             #insert the combined info back
                             split_file.insert(volume_found['position'], volumeprior_label + volume)
                             split_file.insert(volume_found['position']+1, '')
+                            #the label and number are now one token, so the volume is no longer separated
+                            #(otherwise a trailing Vol. # with nothing after it chops the last word off the series)
+                            sep_volume = False
                             #volume_found['position'] = split_file.index(sf, current_pos)
                             #logger.fdebug('NEWSPLITFILE: %s' % split_file)
                         except:
