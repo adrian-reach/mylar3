@@ -1200,6 +1200,10 @@ class PostProcessor(object):
                                                         else:
                                                             logger.fdebug('Matched to Series Title - but Issue Number is not on pull and series is ongoing. Bypassing this check to let the dates verify.')
                                                             second_check = True
+                                                    elif week_intissue is not None and week_intissue > fcdigit:
+                                                        # a newer issue on the pull means the series is still being published, CV just hasn't caught up yet
+                                                        logger.fdebug('Series not marked as ongoing, but a newer issue (#%s) is on the pull. Treating as ongoing and letting the dates verify.' % week_issue)
+                                                        second_check = True
                                                     else:
                                                         # only worry about the last 2 weeks of the pull (basically where the data might be available due to CV being late / not updatin$
                                                         tmp_weeknumber = int(test[3])
@@ -1240,7 +1244,7 @@ class PostProcessor(object):
                                         logger.fdebug('not a match')
 
                                     if all([second_check is False, cs['WatchValues']['Type'] != 'TPB', cs['WatchValues']['Type'] != 'GN', cs['WatchValues']['Type'] != 'HC', cs['WatchValues']['Type'] != 'One-Shot']):
-                                        logger.fdebug('%s %s in filename don\'t match up to what\'s in the dB for %s [%s]. This is a wrong match. Continuing...' % (watchmatch['series_name'], watchmatch['justthedigits'], cs['ComicName'], cs['ComicID']))
+                                        logger.warn('%s %s in filename don\'t match up to what\'s in the dB for %s [%s]. This is a wrong match. Continuing... (if this is the right series, try refreshing it or enabling Force Continuing)' % (watchmatch['series_name'], watchmatch['justthedigits'], cs['ComicName'], cs['ComicID']))
                                         continue
 
                                     if any([watch_values['ComicVersion'] is None, watch_values['ComicVersion'] == 'None']):
