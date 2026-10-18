@@ -56,3 +56,8 @@ Haunted Horror 029(2017)(Digital)(TLK-EMPIRE-HD).cbr,Haunted Horror,029,2017,Non
 "Excalibur, 2019-11-20 (02) (digital) (Glorith-HD).cbr",Excalibur,02,2019,None,False,
 Weapon Zero T-2.cbz,Weapon Zero,T-2,None,None,True,Prefix string issues not yet supported
 God Is Dead The Book of Acts Alpha.cbz,God Is Dead The Book of Acts,Alpha,None,None,True,Pure string issue not yet covered
+Image.Comics-Creepshow.Vol.05.No.01.2026.HYBRID.COMIC,Creepshow,01,2026,None,False,Scene naming with publisher prefix
+Dynamite-Gargoyles.Vol.02.No.02.2026.Hybrid.Comic,Gargoyles,02,2026,None,False,Scene naming with publisher prefix
+Marvel.Comics-Amazing.Spider-Man.Vol.07.No.12.2026.HYBRID.COMIC,Amazing Spider-Man,12,2026,None,False,Scene naming with hyphenated title
+The.Twilight.Zone.005.[2014].[digital].[Minutemen-Acan],The Twilight Zone,005,2014,None,False,Year in square brackets
+Batman 001 [2016] [Digital].cbz,Batman,001,2016,None,False,Year in square brackets

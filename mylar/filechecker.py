@@ -227,6 +227,22 @@ class FileChecker(object):
 
         return watchmatch
 
+    def scene_normalize(self, filename):
+        #scene releases are named Publisher-Series.Vol.XX.No.YY.YYYY.EXTRA.COMIC which the parser can't handle,
+        #so rewrite them as Series YY (YYYY). The scene volume is the publisher's own numbering and rarely
+        #lines up with the volume on CV, so it's dropped in favour of the year.
+        m = re.match(r'^(?P<name>.+?)\.Vol\.\d+\.No\.(?P<issue>\d+)\.(?P<year>\d{4})(?:\..*)?$', filename, re.IGNORECASE)
+        if m is None:
+            return None
+        name = m.group('name')
+        if '-' in name:
+            #the publisher prefix is everything before the first dash, unless the dash is part of
+            #the title being searched for (ie. Spider-Man.Vol.01.No.01.2026.HYBRID.COMIC)
+            simplify = lambda x: re.sub(r'[\W_]', '', x.lower())
+            if self.watchcomic is None or simplify(name) != simplify(self.watchcomic):
+                name = name.split('-', 1)[1]
+        return '%s %s (%s)' % (name.replace('.', ' ').strip(), m.group('issue'), m.group('year'))
+
     def parseit(self, path, filename, subpath=None):
 
         path_list = None
@@ -281,6 +297,9 @@ class FileChecker(object):
                 modfilename = modfilename[removest+1:]
                 if mylar.CONFIG.FOLDER_SCAN_LOG_VERBOSE:
                     logger.fdebug('[SARC] Removed Reading Order sequence from subname. Now set to : %s' % modfilename)
+
+        #nzb names often wrap the year in square brackets (ie. Series.001.[2014].[digital]) - treat it like (2014) so the year gets detected
+        modfilename = re.sub(r'\[((?:19|20)\d{2})\]', r'(\1)', modfilename)
 
         #make sure all the brackets are properly spaced apart
         if modfilename.find(r'\s') == -1:
@@ -352,6 +371,12 @@ class FileChecker(object):
                 logger.fdebug('issueid: %s' % issueid)
                 modfilename = '%s %s'.strip() % (modfilename[:x], modfilename[y+3:])
                 logger.fdebug('issueid %s removed successfully: %s' % (issueid, modfilename))
+
+        #scene-style nzb names (ie. Image.Comics-Creepshow.Vol.05.No.01.2026.HYBRID.COMIC) need to be reformatted before parsing
+        scene_name = self.scene_normalize(modfilename)
+        if scene_name is not None:
+            logger.fdebug('[SCENE-NAMING] Reformatted %s to %s' % (modfilename, scene_name))
+            modfilename = scene_name
 
         #here we take a snapshot of the current modfilename, the intent is that we will remove characters that match
         #as we discover them - namely volume, issue #, years, etc
