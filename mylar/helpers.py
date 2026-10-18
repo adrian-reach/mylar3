@@ -4149,7 +4149,7 @@ def tail_that_log():
     # place holder for the lines found
     lines_found = []
 
-    f = open(os.path.join(mylar.CONFIG.LOG_DIR,'mylar.log'), 'r')
+    f = open(os.path.join(mylar.CONFIG.LOG_DIR,'mylar.log'), 'r', encoding='utf-8', errors='replace')
     lines = 100
     buffer = 4098
 

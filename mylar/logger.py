@@ -101,7 +101,8 @@ if not LOG_LANG.startswith('en'):
                 filehandler = RFHandler(
                     self.filename,
                     maxBytes=max_logsize,
-                    backupCount=max_logfiles)
+                    backupCount=max_logfiles,
+                    encoding='utf-8')
 
                 filehandler.setLevel(logging.DEBUG)
 
@@ -113,6 +114,8 @@ if not LOG_LANG.startswith('en'):
 
             if loglevel:
                 consolehandler = logging.StreamHandler()
+                if hasattr(consolehandler.stream, 'reconfigure'):
+                    consolehandler.stream.reconfigure(errors='backslashreplace')
                 if loglevel == 1:
                     consolehandler.setLevel(logging.INFO)
                 if loglevel >= 2:
@@ -272,7 +275,7 @@ else:
         if log_dir:
             filename = os.path.join(log_dir, 'mylar.log')
             file_formatter = Formatter('%(asctime)s - %(levelname)-7s :: %(name)s.%(funcName)s.%(lineno)s : %(threadName)s : %(message)s', '%d-%b-%Y %H:%M:%S')
-            file_handler = RFHandler(filename, "a", maxBytes=max_logsize, backupCount=max_logfiles)
+            file_handler = RFHandler(filename, "a", maxBytes=max_logsize, backupCount=max_logfiles, encoding='utf-8')
             if loglevel == 1:  #normal
                 file_handler.setLevel(logging.INFO)
             elif loglevel >= 2:   #verbose
@@ -285,6 +288,9 @@ else:
         if console:
             console_formatter = logging.Formatter('%(asctime)s - %(levelname)s :: %(name)s.%(funcName)s.%(lineno)s : %(threadName)s : %(message)s', '%d-%b-%Y %H:%M:%S')
             console_handler = logging.StreamHandler()
+            #a cp1252 windows console can't encode every series name (ie. ―) - escape those instead of erroring
+            if hasattr(console_handler.stream, 'reconfigure'):
+                console_handler.stream.reconfigure(errors='backslashreplace')
             console_handler.setFormatter(console_formatter)
             if loglevel == 1:  #normal
                 console_handler.setLevel(logging.INFO)
