@@ -1203,8 +1203,8 @@ def havetotals(refreshit=None, start_char_filter=None):
 
 def filesafe(comic):
     import unicodedata
-    if '\u2014' in comic:
-        comic = re.sub('\u2014', ' - ', comic)
+    if any(x in comic for x in ['\u2014', '\u2015']):
+        comic = re.sub('[\u2014\u2015]', ' - ', comic)
     try:
         u_comic = unicodedata.normalize('NFKD', comic).encode('ASCII', 'ignore').strip()
     except TypeError:

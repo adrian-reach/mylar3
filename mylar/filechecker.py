@@ -56,7 +56,7 @@ class FileChecker(object):
             self.og_watchcomic = watchcomic
             self.watchcomic = re.sub(r'\?', '', watchcomic).strip()  #strip the ? seperate since it affects the regex.
             #replace variations of unicode dashes with a normal - because this world is f'd up enough to have something like that.
-            self.watchcomic = re.sub(r'[\u2014|\u2013|\u2e3a|\u2e3b]', ' - ', self.watchcomic).strip()
+            self.watchcomic = re.sub(r'[\u2014|\u2013|\u2015|\u2e3a|\u2e3b]', ' - ', self.watchcomic).strip()
             self.watchcomic = re.sub(r'\u2019', " ' ", self.watchcomic).strip()  #replace the \u2019 with a normal ' because again, people are dumb.
             if type(self.watchcomic) != str:
                 self.watchcomic = unicodedata.normalize('NFKD', self.watchcomic).encode('ASCII', 'ignore')
@@ -1756,7 +1756,7 @@ class FileChecker(object):
                                 spacer+='|'
                             mod_watchcomic = mod_watchcomic[:wd] + spacer + mod_watchcomic[wd+len(wdrm):]
 
-        series_name = re.sub(r'[\u2014|\u2013|\u2e3a|\u2e3b]', ' - ', series_name)
+        series_name = re.sub(r'[\u2014|\u2013|\u2015|\u2e3a|\u2e3b]', ' - ', series_name)
         series_name = re.sub('\u2019', " ' ", series_name)
         seriesdynamic_handlers_match = [x for x in self.dynamic_handlers if x.lower() in series_name.lower()]
         #logger.fdebug('series dynamic handlers recognized : ' + str(seriesdynamic_handlers_match))
