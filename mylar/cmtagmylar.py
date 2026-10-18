@@ -70,6 +70,26 @@ def run(dirName, nzbName=None, issueid=None, comversion=None, manual=None, filen
         tidyup(og_filepath, new_filepath, new_folder, manualmeta)
         return "fail"
 
+    #comictagger can't read pdfs, so they have to be converted to cbz before anything else can happen
+    if filename.lower().endswith('.pdf'):
+        if not mylar.CONFIG.PDF2CBZ:
+            logger.warn('%s %s is a PDF which cannot be tagged. Enable PDF to CBZ conversion to have it converted. Leaving it as-is.' % (module, filename))
+            tidyup(og_filepath, new_filepath, new_folder, manualmeta)
+            return "fail"
+        from mylar import pdf2cbz
+        try:
+            cbz_filepath = pdf2cbz.convert(filepath)
+            os.chmod(cbz_filepath, original_perms)
+            os.remove(filepath)
+        except Exception as e:
+            logger.warn('%s[PDF-TO-CBZ] Unable to convert %s to cbz: %s' % (module, filename, e))
+            sendnotify('Error - Unable to convert PDF to CBZ: %s' % e, filename, module)
+            tidyup(og_filepath, new_filepath, new_folder, manualmeta)
+            return "fail"
+        logger.info('%s[PDF-TO-CBZ] Converted %s to %s' % (module, filename, os.path.basename(cbz_filepath)))
+        filepath = new_filepath = cbz_filepath
+        filename = os.path.basename(cbz_filepath)
+
     ## Sets up other directories ##
     scriptname = os.path.basename(sys.argv[0])
     downloadpath = os.path.abspath(dirName)

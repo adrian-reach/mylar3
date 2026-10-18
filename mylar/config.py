@@ -341,6 +341,7 @@ _CONFIG_DEFINITIONS = OrderedDict({
     'ENABLE_META': (bool, 'Metatagging', False),
     'CMTAGGER_PATH': (str, 'Metatagging', None),
     'CBR2CBZ_ONLY': (bool, 'Metatagging', False),
+    'PDF2CBZ': (bool, 'Metatagging', False),
     'CT_TAG_CR': (bool, 'Metatagging', True),
     'CT_TAG_CBL': (bool, 'Metatagging', False),
     'CT_CBZ_OVERWRITE': (bool, 'Metatagging', False),

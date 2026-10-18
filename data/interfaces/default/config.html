@@ -1322,6 +1322,10 @@
                                                 <input type="hidden" id="cbr2cbz_config" value="${cbr2cbz_config}" />
                                                 <input id="cbr2cbz_only" type="checkbox" name="cbr2cbz_only" value="1" ${config['cbr2cbz_only']} /><label style="float:left;width:75%;">Convert CBR to CBZ</label>
                                         </div>
+                                        <div class="row checkbox left clearfix">
+                                                <input id="pdf2cbz" type="checkbox" name="pdf2cbz" value="1" ${config['pdf2cbz']} /><label style="float:left;width:75%;">Convert PDF to CBZ</label>
+                                                <small>Runs along with Metadata Tagging / CBR to CBZ conversion. Requires PyMuPDF (pip install pymupdf)</small>
+                                        </div>
 <!--
                                         <div class="row checkbox left clearfix">
                                                 <input style="float:left;width:40px;" id="cbr2cb7_only" type="checkbox" name="cbr2cb7_only" value="0" /><label style="float:left;width:75%;">Convert (CBR/CBZ) to CB7</label>
