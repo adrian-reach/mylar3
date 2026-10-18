@@ -315,8 +315,14 @@ class GC(object):
 
     def loadsite(self, id, link):
 
-        title = os.path.join(mylar.CONFIG.CACHE_DIR, 'html_cache', 'getcomics-' + id)
+        html_cache_path = os.path.join(mylar.CONFIG.CACHE_DIR, 'html_cache')
+        title = os.path.join(html_cache_path, 'getcomics-' + id)
         logger.fdebug('now loading info from local html to resolve via url: %s' % link)
+
+        #html_cache is only created at startup, so recreate it if it's been removed since
+        if not os.path.isdir(html_cache_path):
+            logger.fdebug('html_cache folder missing - recreating: %s' % html_cache_path)
+            os.makedirs(html_cache_path, exist_ok=True)
 
         self.cookie_receipt()
         #logger.fdebug('session cookies: %s' % (self.session.cookies,))
