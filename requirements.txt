@@ -30,4 +30,4 @@ user_agent2>=2021.12.11
 
 #### OPTIONAL LIBRARIES ####
 # needed for PDF to CBZ conversion
-pymupdf>=1.24
+pymupdf>=1.24,<2
