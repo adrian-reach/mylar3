@@ -77,7 +77,8 @@ class Req(object):
                                 p_mod = str(line[:p_test]).strip()
                                 if p_mod == '':
                                     continue
-                                p_version = str(line[p_test+2:]).strip()
+                                # only the first specifier is checked (ie. '1.24' from 'pymupdf>=1.24,<2')
+                                p_version = str(line[p_test+2:]).split(',')[0].strip()
                                 if p_version == '':
                                     continue
                                 if p_mod == 'requests[socks]':
