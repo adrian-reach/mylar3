@@ -1455,7 +1455,9 @@ class GC(object):
                     issfind_st = vol_find+4
 
         #logger.fdebug('issfind_en: %s' % issfind_en)
-        if issfind_en != -1:
+        # no '#' and no number before the dash means it's a separator in the
+        # title (ie. 'Crisis on Infinite Earths - 35th Anniversary'), not a range
+        if issfind_en != -1 and issfind_st != -1:
             if all([title[issfind_en + 1] == ' ', title[issfind_en + 2].isdigit()]):
                 iss_en = title.find(' ', issfind_en + 2)
                 #logger.info('iss_en: %s [%s]' % (iss_en, title[iss_en +2]))
